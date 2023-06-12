@@ -1,0 +1,79 @@
+# create an ec2 instance (ubuntu 20.04)
+
+# install jenkins in that instance    
+
+		$ sudo apt-get update -y
+		
+		$ sudo apt-get upgrade -y
+
+		$ sudo apt-get install openjdk-11-jdk -y
+
+		$ wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+
+		$ sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+		$ sudo apt-get update -y 
+
+		$ sudo apt-get install jenkins -y
+
+		$ sudo systemctl status jenkins
+
+# once jenkins is installed create a free style job in it and intergrate with github with the help of plugin(GIT).
+
+#  later integrate with the build tool called maven(which generates artifacts JAR,WAR,EAR files) with the help of build step(invoke top level maven) select the version and give the maven goals.configure the job if the job is success.
+
+#  we are ready to deploy into the production server(tomcat)
+
+# create an ec2 instance(ubuntu 20.04)and install tomcat server in it.
+
+		$ sudo apt-get update -y     (get the tomcat link to dowload in the server)
+
+		$ wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.89/bin/apache-tomcat-8.5.89.tar.gz
+
+		$ sudo -xvzf  apache.org/tomcat/tomcat-8/v8.5.89/bin/apache-tomcat-8.5.89.tar.gz      // To convert untar file to tar file
+
+		$ cd apache.org/tomcat/tomcat-8/v8.5.89/bin/apache-tomcat-8.5.89.tar.gz        // change directory to that tar file
+
+		$ ls (list of files)
+
+		$ cd bin  (go to the bin directory)
+
+		$ sudo apt-get install openjdk-8* -y
+
+		$ ./shutdown.ssh
+
+		$ ./startup.ssh  (tomcat will start) //tomcat and jenkins runs on same port number so we need to change tomcat port number
+
+		$ cd ..		$ ls			$ cd conf/			$ ls
+
+		$ vi server.xml  ( there will be connector port there we have to change the port number)
+
+		$ cd ..		$ cd bin		$ ./shutdown.sh		$ ./startup.sh  
+
+		$ sudo find / -name context.xml   (To find context.xml file)
+
+		$ sudo vi go the files and edit all the files (disable all the valve in it )
+
+		$ ./shutdown.sh		$ ./startup.sh  (tomcat will start)
+
+		$ cd ..		$ cd conf/
+
+		$ sudo vi tomcat-users.xml
+
+					          <role rolename="manager-gui"/>
+          					  <role rolename="manager-script"/>
+        					  <role rolename="manager-jmx"/>
+         					  <role rolename="manager-status"/>
+          					  <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+            					  <user username="deployer" password="deployer" roles="manager-script"/>
+         					  <user username="tomcat" password="s3cret" roles="manager-gui"/>
+
+#  Integrate the tomcat server with jenkins with the help of plugin(deploy to container)
+
+# manage credentails ---->system----->global credentails----->add credentials---->user name,password(deployer--*******) cliack create
+
+# configure that job -----> add post build actions---->WAR/EAR file----->add container(tomcat 8.x)-----> tomcat URL
+
+
+		
+
